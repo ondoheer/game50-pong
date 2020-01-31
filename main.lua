@@ -247,6 +247,15 @@ function love.update(dt)
         else
             player1.dy = 0
         end
+    else
+        -- calculate paddle movement for AI
+        if ball.y > player1.y then
+            player1.dy = PADDLE_SPEED
+        elseif ball.y < player1.y then 
+            player1.dy = -PADDLE_SPEED
+        else 
+            player1.dy = 0
+        end
     end
 
     -- player 2
@@ -256,6 +265,15 @@ function love.update(dt)
         elseif love.keyboard.isDown('down') then
             player2.dy = PADDLE_SPEED
         else
+            player2.dy = 0
+        end
+    else
+        -- calculate paddle movement for AI
+        if ball.y > player2.y then
+            player2.dy = PADDLE_SPEED
+        elseif ball.y < player2.y then 
+            player2.dy = -PADDLE_SPEED
+         else
             player2.dy = 0
         end
     end
@@ -355,11 +373,13 @@ function love.draw()
         love.graphics.printf("Will player 2 be a human?",0, 20, VIRTUAL_WIDTH, 'center')
          love.graphics.printf("(y/n)",0, 30, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'serve' then
+        
         -- UI messages
         love.graphics.setFont(smallFont)
         love.graphics.printf('Player ' .. tostring(servingPlayer) .. "'s serve!", 
             0, 10, VIRTUAL_WIDTH, 'center')
         love.graphics.printf('Press Enter to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
+
     elseif gameState == 'play' then
         -- no UI messages to display in play
     elseif gameState == 'done' then
