@@ -50,6 +50,12 @@ VIRTUAL_HEIGHT = 243
 -- paddle movement speed
 PADDLE_SPEED = 200
 
+-- This will define the frequency of paddle position update
+DIFFICULTY_LEVELS = {
+    ['easy'] = 3,
+    ['medium'] = 2,
+    ['hard'] = 1
+}
 --[[
     Called just once at the beginning of the game; used to set up
     game objects, variables, etc. and prepare the game world.
@@ -100,6 +106,13 @@ function love.load()
     player1Human = true
     player2Human = true 
 
+    player1Difficulty = nil
+    player2Difficulty = nil
+
+    -- AI animation update timer
+    -- We initialize it to have something to compare with
+    aiAnimationUpdateTimer = love.timer.getTime()
+
     -- initialize score variables
     player1Score = 0
     player2Score = 0
@@ -115,10 +128,12 @@ function love.load()
     -- the state of our game; can be any of the following:
     -- 1. 'start' (the beginning of the game, before first serve)
     -- 2. 'selectPlayer1' (choose if it will be human or AI)
+    -- 3. 'selectPlayer1Difficulty' (only if player 1 is AI)
     -- 3. 'selectPlayer2' (choose if it will be human or AI)
-    -- 2. 'serve' (waiting on a key press to serve the ball)
-    -- 3. 'play' (the ball is in play, bouncing between paddles)
-    -- 4. 'done' (the game is over, with a victor, ready for restart)
+    -- 4. 'selectPlayer2Difficulty' (only if player 2 is AI)
+    -- 5. 'serve' (waiting on a key press to serve the ball)
+    -- 6. 'play' (the ball is in play, bouncing between paddles)
+    -- 7. 'done' (the game is over, with a victor, ready for restart)
     gameState = 'start'
 end
 
@@ -250,7 +265,9 @@ function love.update(dt)
         end
     else
         -- calculate paddle movement for AI
-        if gameState == 'play' and ball.dx < 0 then
+        local timeSinceMoved = math.floor((love.timer.getTime() - aiAnimationUpdateTimer)*1000)
+        
+        if gameState == 'play' and ball.dx < 0 and timeSinceMoved % DIFFICULTY_LEVELS[player1Difficulty] == 0 then
 
             if math.floor(ball.y) > math.floor(player1.y)  then
                 player1.dy = PADDLE_SPEED
@@ -272,8 +289,10 @@ function love.update(dt)
             player2.dy = 0
         end
     else
+        local timeSinceMoved = math.floor((love.timer.getTime() - aiAnimationUpdateTimer)*1000)
         -- calculate paddle movement for AI
-        if gameState == 'play' and ball.dx > 0 then
+ 
+        if gameState == 'play' and ball.dx > 0 and timeSinceMoved % DIFFICULTY_LEVELS[player2Difficulty] == 0 then
             if math.floor(ball.y) > math.floor(player2.y) then
                 player2.dy = PADDLE_SPEED
             elseif math.floor(ball.y) < math.floor(player2.y) then 
@@ -333,24 +352,51 @@ function love.keypressed(key)
         end
     -- on theplayer selection states define their behavior (human or AI)
     -- since human is the default we only set the AI when necesary
-    elseif key == 'n' then
+    elseif key == 'y' then
         if gameState == 'selectPlayer1' then
-            player1Human = false
+            
             gameState = 'selectPlayer2'
           
         elseif gameState == 'selectPlayer2' then
             
-            player2Human = false            
+           
             gameState = 'serve'
         end
     
-    elseif key == 'y' then 
+    elseif key == 'n' then 
         if gameState == 'selectPlayer1' then
-            gameState = 'selectPlayer2'
+            player1Human = false
+            gameState = 'selectPlayer1Difficulty'
         elseif gameState == 'selectPlayer2' then 
-            gameState = 'serve'
+             player2Human = false            
+            gameState = 'selectPlayer2Difficulty'
+        end
+    elseif key == "e" then
+        if gameState == 'selectPlayer1Difficulty' then
+            player1Difficulty = "easy"
+            gameState = "selectPlayer2"
+        elseif gameState == 'selectPlayer2Difficulty' then 
+            player2Difficulty = "easy"
+            gameState = "serve"
+        end
+    elseif key == "m" then
+        if gameState == 'selectPlayer1Difficulty' then
+            player1Difficulty = "medium"
+            gameState = "selectPlayer2"
+        elseif gameState == 'selectPlayer2Difficulty' then 
+            player2Difficulty = "medium"
+            gameState = "serve"
+        end
+    elseif key == "h" then
+        if gameState == 'selectPlayer1Difficulty' then
+            player1Difficulty = "hard"
+            gameState = "selectPlayer2"
+        elseif gameState == 'selectPlayer2Difficulty' then 
+            player2Difficulty = "hard"
+            gameState = "serve"
         end
     end
+
 end
 
 --[[
@@ -374,6 +420,16 @@ function love.draw()
         love.graphics.setFont(smallFont)
         love.graphics.printf("Will player 1 be a human? ",0, 20, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("(y/n)",0, 30, VIRTUAL_WIDTH, 'center')
+    elseif gameState == 'selectPlayer1Difficulty' then 
+        -- UI messages
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Choose AI difficulty for player 1: [e]asy, [m]edium, [h]ard",0, 20, VIRTUAL_WIDTH, 'center')
+    
+    elseif gameState == 'selectPlayer2Difficulty' then 
+        -- UI messages
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Choose AI difficulty for player 2: [e]asy, [m]edium, [h]ard",0, 20, VIRTUAL_WIDTH, 'center')
+      
     elseif gameState == 'selectPlayer2' then 
         -- UI messages
         love.graphics.setFont(smallFont)
