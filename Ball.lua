@@ -57,6 +57,8 @@ function Ball:reset()
     self.dy = 0
 end
 
+
+
 function Ball:update(dt)
     self.x = self.x + self.dx * dt
     self.y = self.y + self.dy * dt

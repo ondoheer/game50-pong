@@ -252,9 +252,9 @@ function love.update(dt)
         -- calculate paddle movement for AI
         if gameState == 'play' and ball.dx < 0 then
 
-            if ball.y > player1.y  then
+            if math.floor(ball.y) > math.floor(player1.y)  then
                 player1.dy = PADDLE_SPEED
-            elseif ball.y < player1.y then 
+            elseif math.floor(ball.y) < math.floor(player1.y) then 
                 player1.dy = -PADDLE_SPEED
             else 
                 player1.dy = 0
@@ -274,9 +274,9 @@ function love.update(dt)
     else
         -- calculate paddle movement for AI
         if gameState == 'play' and ball.dx > 0 then
-            if ball.y > player2.y then
+            if math.floor(ball.y) > math.floor(player2.y) then
                 player2.dy = PADDLE_SPEED
-            elseif ball.y < player2.y then 
+            elseif math.floor(ball.y) < math.floor(player2.y) then 
                 player2.dy = -PADDLE_SPEED
             else
                 player2.dy = 0
@@ -304,9 +304,10 @@ function love.keypressed(key)
     -- `key` will be whatever key this callback detected as pressed
     if key == 'escape' then
         -- the function LÖVE2D uses to quit the application
-        love.event.quit()
-    -- if we press enter during either the start or serve phase, it should
+        love.event.quit()    -- if we press enter during either the start or serve phase, it should
     -- transition to the next appropriate state
+    elseif key == 'lctrl' then
+        debug.debug()
     elseif key == 'enter' or key == 'return' then
         if gameState == 'start' then
             gameState = 'selectPlayer1'
