@@ -250,8 +250,9 @@ function love.update(dt)
         end
     else
         -- calculate paddle movement for AI
-        if gameState == 'play' then
-            if ball.y > player1.y then
+        if gameState == 'play' and ball.dx < 0 then
+
+            if ball.y > player1.y  then
                 player1.dy = PADDLE_SPEED
             elseif ball.y < player1.y then 
                 player1.dy = -PADDLE_SPEED
@@ -272,7 +273,7 @@ function love.update(dt)
         end
     else
         -- calculate paddle movement for AI
-        if gameState == 'play' then
+        if gameState == 'play' and ball.dx > 0 then
             if ball.y > player2.y then
                 player2.dy = PADDLE_SPEED
             elseif ball.y < player2.y then 
