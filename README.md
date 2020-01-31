@@ -1,8 +1,8 @@
-Game 50 Pong
+# Game 50 Pong
 
 This is the [assignment](https://docs.cs50.net/games/2020/x/assignments/0/assignment0.html) for the CS50 Game Development course.
 
-Steps for Paddle AI
+### Steps for Paddle AI
 
 - Select AI player or Human Player **DONE**
   - select player 1 **DONE**
