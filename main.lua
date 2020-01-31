@@ -98,7 +98,7 @@ function love.load()
 
     -- Define paddles as human players
     player1Human = true
-    player2Human = false 
+    player2Human = true 
 
     -- initialize score variables
     player1Score = 0
@@ -114,6 +114,8 @@ function love.load()
 
     -- the state of our game; can be any of the following:
     -- 1. 'start' (the beginning of the game, before first serve)
+    -- 2. 'selectPlayer1' (choose if it will be human or AI)
+    -- 3. 'selectPlayer2' (choose if it will be human or AI)
     -- 2. 'serve' (waiting on a key press to serve the ball)
     -- 3. 'play' (the ball is in play, bouncing between paddles)
     -- 4. 'done' (the game is over, with a victor, ready for restart)
@@ -283,7 +285,7 @@ function love.keypressed(key)
     -- transition to the next appropriate state
     elseif key == 'enter' or key == 'return' then
         if gameState == 'start' then
-            gameState = 'serve'
+            gameState = 'selectPlayer1'
         elseif gameState == 'serve' then
             gameState = 'play'
         elseif gameState == 'done' then
@@ -304,6 +306,25 @@ function love.keypressed(key)
                 servingPlayer = 1
             end
         end
+    -- on theplayer selection states define their behavior (human or AI)
+    -- since human is the default we only set the AI when necesary
+    elseif key == 'n' then
+        if gameState == 'selectPlayer1' then
+            player1Human = false
+            gameState = 'selectPlayer2'
+          
+        elseif gameState == 'selectPlayer2' then
+            
+            player2Human = false            
+            gameState = 'serve'
+        end
+    
+    elseif key == 'y' then 
+        if gameState == 'selectPlayer1' then
+            gameState = 'selectPlayer2'
+        elseif gameState == 'selectPlayer2' then 
+            gameState = 'serve'
+        end
     end
 end
 
@@ -322,7 +343,17 @@ function love.draw()
         -- UI messages
         love.graphics.setFont(smallFont)
         love.graphics.printf('Welcome to Pong!', 0, 10, VIRTUAL_WIDTH, 'center')
-        love.graphics.printf('Press Enter to begin!', 0, 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf('Press Enter to Select players!', 0, 20, VIRTUAL_WIDTH, 'center')
+    elseif gameState == 'selectPlayer1' then 
+        -- UI messages
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Will player 1 be a human? ",0, 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("(y/n)",0, 30, VIRTUAL_WIDTH, 'center')
+    elseif gameState == 'selectPlayer2' then 
+        -- UI messages
+        love.graphics.setFont(smallFont)
+        love.graphics.printf("Will player 2 be a human?",0, 20, VIRTUAL_WIDTH, 'center')
+         love.graphics.printf("(y/n)",0, 30, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'serve' then
         -- UI messages
         love.graphics.setFont(smallFont)
