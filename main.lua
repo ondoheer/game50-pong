@@ -231,6 +231,7 @@ function love.update(dt)
                 gameState = 'serve'
                 -- places the ball in the middle of the screen, no velocity
                 ball:reset()
+                
             end
         end
     end
@@ -249,12 +250,14 @@ function love.update(dt)
         end
     else
         -- calculate paddle movement for AI
-        if ball.y > player1.y then
-            player1.dy = PADDLE_SPEED
-        elseif ball.y < player1.y then 
-            player1.dy = -PADDLE_SPEED
-        else 
-            player1.dy = 0
+        if gameState == 'play' then
+            if ball.y > player1.y then
+                player1.dy = PADDLE_SPEED
+            elseif ball.y < player1.y then 
+                player1.dy = -PADDLE_SPEED
+            else 
+                player1.dy = 0
+            end
         end
     end
 
@@ -269,12 +272,14 @@ function love.update(dt)
         end
     else
         -- calculate paddle movement for AI
-        if ball.y > player2.y then
-            player2.dy = PADDLE_SPEED
-        elseif ball.y < player2.y then 
-            player2.dy = -PADDLE_SPEED
-         else
-            player2.dy = 0
+        if gameState == 'play' then
+            if ball.y > player2.y then
+                player2.dy = PADDLE_SPEED
+            elseif ball.y < player2.y then 
+                player2.dy = -PADDLE_SPEED
+            else
+                player2.dy = 0
+            end
         end
     end
 
